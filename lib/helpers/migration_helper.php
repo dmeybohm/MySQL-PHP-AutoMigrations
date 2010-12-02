@@ -140,7 +140,8 @@ class MpmMigrationHelper
 				//fetch object, store in database
 				$string = file_get_contents($filename);
 				$string = preg_replace('/(class Migration_)(\d{4}(?:_\d{2}){5})/','$1objectstore_$2',$string,1);
-				$query_serial = sprintf(', objectstore="%s" ',$dbObj->real_escape_string($string));
+				$escape_method = method_exists($dbObj,'real_escape_string') ? 'real_escape_string' : 'quote';
+				$query_serial = sprintf(', objectstore="%s" ',$dbObj->$escape_method($string));
 				$sql = "UPDATE `mpm_migrations` SET `active` = '$active' $query_serial WHERE `id` = {$obj->id}";
 			} else {
 				//delete from database. 
